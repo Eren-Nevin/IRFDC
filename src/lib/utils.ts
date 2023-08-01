@@ -1,8 +1,4 @@
 import { ethers } from 'ethers';
 
-export const SERVER_ADDRESS = 'https://test.xtreamly.io:5002'
+export const SERVER_ADDRESS = 'https://irfdc.adinal.co:3001'
 
-export function generateRandomAccount() {
-    const wallet = ethers.Wallet.createRandom();
-    return wallet.address;
-}

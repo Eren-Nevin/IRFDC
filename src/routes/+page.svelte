@@ -2,6 +2,9 @@
 	import { isLoggedIn } from '$lib/auth';
 	import { MetamaskHandler } from '$lib/metamask';
 
+    import { getCompaniesName } from '$lib/gather';
+
+
 	type StartState = 'none' | 'metamask' | 'snap';
 	type ButtonState = 'disabled' | 'ready' | 'done';
 
@@ -101,7 +104,9 @@
 		<button
 			class="btn btn-primary {getButtonClass('snap', appState)}"
 			on:click={async () => {
-				await openPopUpClickHandler();
+				// await openPopUpClickHandler();
+                await getCompaniesName(100, 10);
+
 			}}>Open Xtreamly</button
 		>
 	</div>
