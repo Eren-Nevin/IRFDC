@@ -1,0 +1,17 @@
+  39   │     {
+  40   │       "Id": 7008,
+  41   │       "IRCNo": "9688286357132745",
+  42   │       "EnBrandName": "Acetami",
+  43   │       "FaBrandName": "استامیونفت",
+  44   │       "BrandOwnerName": null,
+  45   │       "BrandOwnerCountryName": null,
+  46   │       "Producer": "غذا آوران تست",
+  47   │       "Owner": "غذا آوران تست",
+  48   │       "CreateDate": "1395/02/15",
+  49   │       "LicenseOwnerCompanyId": 23868,
+  50   │       "GTIN": null,
+  51   │       "DrugGenericName": null,
+  52   │       "ExpirationDate": "1399/03/31",
+  53   │       "IssuanceDate": "1395/02/15",
+  54   │       "IsTemporaryIRC": null
+  55   │     },

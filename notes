@@ -1,0 +1,55 @@
+0- Both
+- API Base URL: https://irc.fda.gov.ir/api
+- Coolkie: ASP.NET_SessionId=<String>
+
+- Params: 
+-- pageNumber=<N>
+-- pageSize=<N>
+-- term=<String>
+
+1- Get Company Names:
+- API: /Company/LoadCompanies
+- Size Estimate: 80K
+** Note this is same for all categories
+curl 'https://irc.fda.gov.ir/api/Company/LoadCompanies?pageNumber=798&pageSize=100&term=' \                                                                                                                     0
+         -H 'Accept: application/json, text/plain, */*' \
+         -H 'Accept-Language: en-US,en;q=0.9,fa-IR;q=0.8,fa;q=0.7,af;q=0.6' \
+         -H 'Cache-Control: no-cache' \
+         -H 'Connection: keep-alive' \
+         -H 'Cookie: ASP.NET_SessionId=fwrevdckktgrf2b0vkspmsvn' \
+         -H 'DNT: 1' \
+         -H 'Pragma: no-cache' \
+         -H 'Referer: https://irc.fda.gov.ir/home/public/IRC' \
+         -H 'Sec-Fetch-Dest: empty' \
+         -H 'Sec-Fetch-Mode: cors' \
+         -H 'Sec-Fetch-Site: same-origin' \
+         -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36' \
+         -H 'sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"' \
+         -H 'sec-ch-ua-mobile: ?0' \
+         -H 'sec-ch-ua-platform: "macOS"' \
+         --compressed
+
+2- Get Company Products
+- API: /IRCApi/GetRegisteredSubstanceIRC
+- Params: 
+-- licenseOwnerCompanyId=<N>
+
+curl 'https://irc.fda.gov.ir/api/IRCApi/GetRegisteredSubstanceIRC?licenseOwnerCompanyId=23868&pageNumber=1&pageSize=10&term=' \                                                                                 0
+         -H 'Accept: application/json, text/plain, */*' \
+         -H 'Accept-Language: en-US,en;q=0.9,fa-IR;q=0.8,fa;q=0.7,af;q=0.6' \
+         -H 'Cache-Control: no-cache' \
+         -H 'Connection: keep-alive' \
+         -H 'Cookie: ASP.NET_SessionId=fwrevdckktgrf2b0vkspmsvn' \
+         -H 'DNT: 1' \
+         -H 'Pragma: no-cache' \
+         -H 'Referer: https://irc.fda.gov.ir/home/public/IRC' \
+         -H 'Sec-Fetch-Dest: empty' \
+         -H 'Sec-Fetch-Mode: cors' \
+         -H 'Sec-Fetch-Site: same-origin' \
+         -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36' \
+         -H 'sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"' \
+         -H 'sec-ch-ua-mobile: ?0' \
+         -H 'sec-ch-ua-platform: "macOS"' \
+         --compressed
+
+
