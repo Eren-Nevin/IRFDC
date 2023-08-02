@@ -2,24 +2,34 @@ import type { RequestEvent, RequestHandler } from './$types';
 import { error, json, text } from '@sveltejs/kit';
 
 import fs from 'fs';
+import { ResourceRequest, ResourceResponse, getCompaniesName } from '$lib//gather';
+import { SERVER_ADDRESS } from '$lib/utils';
+
+
+export const GET = (async ({ url }) => {
+    console.log(`URL: ${url}`)
+    const filename = url.searchParams.get('filename');
+    console.log(filename);
+
+    const fileStream = fs.createReadStream(`./appData/${filename}`)
+    return new Response(fileStream, {
+        status: 200,
+        headers: {
+            "Content-type": "application/json",
+            "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`
+        },
+
+    })
+}) satisfies RequestHandler;
 
 // urls: companies: /gather/companies
 // products: /gather/products
 export const POST = (async ({ url, request }) => {
     console.log(url)
-    // let save = url.searchParams.get('save');
+    const req = (await request.json()) as ResourceRequest
 
-    return json("");
-    // if (save) {
-    //     let body = await request.text()
-    //     fs.writeFileSync('./appData/data.json', body);
-    //     console.log(body);
-    //     return text('Saved');
-    // }
-    // else {
-    //     let body = fs.readFileSync('./appData/data.json', 'utf8');
-    //     console.log('load');
-    //     return json(body);
-    // }
+    const response = new ResourceResponse(req.resource, 10, `${SERVER_ADDRESS}?filename=data.json`, 'data.json')
+
+    return json(response)
 
 }) satisfies RequestHandler;

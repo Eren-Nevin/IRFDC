@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { isLoggedIn } from '$lib/auth';
 	import { MetamaskHandler } from '$lib/metamask';
-
-    import { getCompaniesName } from '$lib/gather';
-
+	import { SERVER_ADDRESS } from '$lib/utils';
+	import { ResourceRequest, ResourceResponse } from '$lib/gather';
+	import { stringify } from 'postcss';
 
 	type StartState = 'none' | 'metamask' | 'snap';
 	type ButtonState = 'disabled' | 'ready' | 'done';
@@ -69,6 +69,25 @@
 				return '';
 		}
 	};
+
+	// TODO: Does it have size limit?
+	async function downloadStateFileFromServer(fileurl: string, filename: string) {
+		fetch(`${fileurl}`)
+			.then((resp) => resp.blob())
+			.then((blob) => {
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.style.display = 'none';
+				a.href = url;
+				// the filename you want
+				a.download = `${filename}`;
+				document.body.appendChild(a);
+				a.click();
+				window.URL.revokeObjectURL(url);
+				alert('your file has downloaded!'); // or you know, something with better UX...
+			})
+			.catch(() => alert('oh no!'));
+	}
 </script>
 
 <svelte:head>
@@ -104,9 +123,15 @@
 		<button
 			class="btn btn-primary {getButtonClass('snap', appState)}"
 			on:click={async () => {
-				// await openPopUpClickHandler();
-                await getCompaniesName(100, 10);
+				const rawRes = await fetch(SERVER_ADDRESS, {
+					method: 'POST',
+					body: JSON.stringify(new ResourceRequest('companies', 'get_last'))
+				});
+				const res = await rawRes.json();
 
+				console.log(res);
+
+				await downloadStateFileFromServer(res.fileUrl, res.filename);
 			}}>Open Xtreamly</button
 		>
 	</div>
