@@ -28,7 +28,7 @@ export const POST = (async ({ url, request }) => {
     console.log(url)
     const req = (await request.json()) as ResourceRequest
 
-    const response = new ResourceResponse(req.resource, 10, `${SERVER_ADDRESS}?filename=data.json`, 'data.json')
+    const response = new ResourceResponse(req.resource, 10, `${SERVER_ADDRESS}?filename=substance.csv`, 'result.csv')
 
     return json(response)
 
