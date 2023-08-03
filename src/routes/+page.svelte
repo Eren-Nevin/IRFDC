@@ -31,8 +31,45 @@
 	let appState = '';
 	const companies = new Resource('companies', 'None', '0%');
 	const substance = new Resource('substance', 'None', '0%');
+	const drug_license = new Resource('drug_license', 'None', '0%');
+	const drug_equipment = new Resource('drug_equipment', 'None', '0%');
+	const supplement = new Resource('supplement', 'None', '0%');
+	const supplement_license = new Resource('supplement_license', 'None', '0%');
+	const food = new Resource('food', 'None', '0%');
+	const cosmetic = new Resource('cosmetic', 'None', '0%');
+	const special_food = new Resource('special_food', 'None', '0%');
+	const herbal = new Resource('herbal', 'None', '0%');
+	const essentials = new Resource('essentials', 'None', '0%');
+	const cosmetic_license = new Resource('cosmetic_license', 'None', '0%');
 
-	const resources = [companies, substance];
+
+// products_api_endpoints = {
+//     'substance': '/IRCApi/GetRegisteredSubstanceIRC',
+//     'drug_license': '/IRCApi/GetDrugLicenseItemIRC',
+//     'drug_equipment': '/IRCApi/GetDrugEquipmentLicenseItemIRC',
+//     'supplement': '/IRCApi/GetSupplementRegisteredIRC',
+//     'supplement_license': '/IRCApi/GetSupplementLicenseItemIRC',
+//     'food': '/IRCApi/GetFoodRegisteredIRC',
+//     'cosmetic': '/IRCApi/GetCosmeticRegisteredIRC',
+//     'special_food': '/IRCApi/GetParticulareFoodRegisteredIRC',
+//     'herbal': '/api/IRCApi/GetTraditionalHerbaceousDrugRegisteredIRC',
+//     'essentials': '/IRCApi/GetEssentialsRegisteredIRC',
+//     'cosmetic_license': '/IRCApi/GetCosmeticLicenseItemIRC',
+// }
+	const resources = [
+        companies, 
+        substance,
+        drug_license,
+        drug_equipment,
+        supplement,
+        supplement_license,
+        food,
+        cosmetic,
+        special_food,
+        herbal,
+        essentials,
+        cosmetic_license,
+    ];
 
 	async function startupRefresh() {
         for (let i = 0; i < resources.length; i++) {
@@ -57,7 +94,7 @@
 	<link rel="icon" href={logo} />
 </svelte:head>
 
-<div class="w-full h-screen flex items-center justify-center bg-indigo-800">
+<div class="w-full flex items-center justify-center bg-indigo-800 p-4">
 	<div class="container bg-gray-200 rounded-md m-8 p-4">
 		<div class="overflow-x-auto">
 			<table class="table">
@@ -128,7 +165,7 @@
 												// Update exists
 												appState = `Downloading ${resource.name} last update`;
 												await downloadStateFileFromServer(res.fileUrl, res.filename);
-												appState = `${resource.name} Downloaded`;
+												appState = `${resource.name} downloaded`;
 											} else {
 												appState = `Update Doesnt Exist`;
 											}

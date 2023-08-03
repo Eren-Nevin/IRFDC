@@ -39,7 +39,6 @@ export const GET = (async ({ url }) => {
 // urls: companies: /gather/companies
 // products: /gather/products
 export const POST = (async ({ url, request }) => {
-    console.log(url)
     const req = (await request.json()) as ResourceRequest
     const updateFileMaybe = `./appData/${req.resource}.csv`
 
@@ -48,8 +47,9 @@ export const POST = (async ({ url, request }) => {
     let progressContent = '0'
 
     try {
-        progressContent = fs.readFileSync(resource_progress_file, 'utf8');
-
+        if (fs.existsSync(resource_progress_file)) {
+            progressContent = fs.readFileSync(resource_progress_file, 'utf8');
+        }
     } catch (e) {
         console.log(e)
     }
@@ -89,7 +89,7 @@ export const POST = (async ({ url, request }) => {
 
     } else if (req.command = 'update') {
         // TODO: Remove count
-        const command = execShellCommand(`cd backend; python3 app.py companies 1000;`);
+        const command = execShellCommand(`cd backend; python3 app.py ${req.resource} ;`);
         let response = new ResourceResponse(req.resource, '0', ``, ``, ``)
         return json(response)
     }

@@ -13,7 +13,17 @@ base_api_url = 'https://irc.fda.gov.ir/api'
 
 # TODO : Add other endpoints
 products_api_endpoints = {
-    'substance': '/IRCApi/GetRegisteredSubstanceIRC'
+    'substance': '/IRCApi/GetRegisteredSubstanceIRC',
+    'drug_license': '/IRCApi/GetDrugLicenseItemIRC',
+    'drug_equipment': '/IRCApi/GetDrugEquipmentLicenseItemIRC', # Doesn't Work
+    'supplement': '/IRCApi/GetSupplementRegisteredIRC',
+    'supplement_license': '/IRCApi/GetSupplementLicenseItemIRC',
+    'food': '/IRCApi/GetFoodRegisteredIRC', # Work with company
+    'cosmetic': '/IRCApi/GetCosmeticRegisteredIRC',
+    'special_food': '/IRCApi/GetParticulareFoodRegisteredIRC',
+    'herbal': '/IRCApi/GetTraditionalHerbaceousDrugRegisteredIRC',
+    'essentials': '/IRCApi/GetEssentialsRegisteredIRC',
+    'cosmetic_license': '/IRCApi/GetCosmeticLicenseItemIRC',
 }
 
 # company_url = 'https://irc.fda.gov.ir/api/Company/LoadCompanies?pageNumber=798&pageSize=100&term=' 
@@ -91,7 +101,8 @@ def get_company_page(page_number: int, page_size: int):
 def get_specific_product_page(product: str, page_number: int, page_size: int):
     api_endpoint = products_api_endpoints[product]
     product_url = f'{base_api_url}{api_endpoint}'
-    url_with_params = f'{product_url}?pageNumber={page_number}&pageSize={page_size}&term='
+    # url_with_params = f'{product_url}?pageNumber={page_number}&pageSize={page_size}&term='
+    url_with_params = f'{product_url}?licenseOwnerCompanyId=&pageNumber={page_number}&pageSize={page_size}&term='
     print(url_with_params)
 
     s = requests.session();
@@ -103,6 +114,8 @@ def get_specific_product_page(product: str, page_number: int, page_size: int):
     
     res = raw_res.json()
 
+    print(res)
+
     count = res['Count']
     success = res['Success']
     message = res['Message']
@@ -113,7 +126,7 @@ def get_specific_product_page(product: str, page_number: int, page_size: int):
 
 def get_all_specific_product(product: str, dir_path: str, max_count: Optional[int], mean_time_between=10):
     api_endpoint = products_api_endpoints[product]
-    _, count = get_specific_product_page(api_endpoint, 1, 10)
+    _, count = get_specific_product_page(product, 1, 10)
     if max_count:
         count = min(count, max_count)
     print(count)
@@ -153,8 +166,8 @@ if __name__ == '__main__':
         pass
     if resource == 'companies':
         get_all_companies('../appData', count)
-    elif resource == 'substance':
-        get_all_specific_product('substance', '../appData', count)
+    elif resource in products_api_endpoints.keys():
+        get_all_specific_product(f'{resource}', '../appData', count)
     else:
         print("Invalid arguments")
         exit(1)
