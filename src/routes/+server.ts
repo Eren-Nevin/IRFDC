@@ -65,7 +65,7 @@ export const POST = (async ({ url, request }) => {
 
         if (updateExists) {
             const { birthtime, mtime, mtimeMs } = fs.statSync(updateFileMaybe)
-            const formattedDate = new Date(mtimeMs).toLocaleDateString("en-US", { timeZone: "Asia/Tehran" })
+            const formattedDate = new Date(mtimeMs).toLocaleString("en-US", { timeZone: "Asia/Tehran" })
             let response = new ResourceResponse(req.resource, progressContent, `${SERVER_ADDRESS}?filename=${req.resource}.csv`, `${req.resource}.csv`, `${formattedDate}`)
             return json(response)
         }
@@ -78,7 +78,7 @@ export const POST = (async ({ url, request }) => {
     } else if (req.command == 'status') {
         if (updateExists) {
             const { birthtime, mtime, mtimeMs } = fs.statSync(updateFileMaybe)
-            const formattedDate = new Date(mtimeMs).toLocaleDateString("en-US", { timeZone: "Asia/Tehran" })
+            const formattedDate = new Date(mtimeMs).toLocaleString("en-US", { timeZone: "Asia/Tehran" })
             let response = new ResourceResponse(req.resource, progressContent, ``, ``, `${formattedDate}`)
 
             return json(response)
@@ -88,6 +88,7 @@ export const POST = (async ({ url, request }) => {
         }
 
     } else if (req.command = 'update') {
+        // TODO: Remove count
         const command = execShellCommand(`cd backend; python3 app.py companies 1000;`);
         let response = new ResourceResponse(req.resource, '0', ``, ``, ``)
         return json(response)

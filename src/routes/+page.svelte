@@ -4,8 +4,11 @@
 	import { stringify } from 'postcss';
 
 	import logo from '$lib/assets/logo.png';
+	import { onMount } from 'svelte';
 
-	let appState = '';
+	class Resource {
+		constructor(public name: string, public lastUpdate: string, public progress: string) {}
+	}
 
 	// TODO: Does it have size limit?
 	async function downloadStateFileFromServer(fileurl: string, filename: string) {
@@ -25,14 +28,28 @@
 			.catch(() => alert('oh no!'));
 	}
 
-	class Resource {
-		constructor(public name: string, public lastUpdate: string, public progress: string) {}
-	}
-
+	let appState = '';
 	const companies = new Resource('companies', 'None', '0%');
 	const substance = new Resource('substance', 'None', '0%');
 
 	const resources = [companies, substance];
+
+	async function startupRefresh() {
+        for (let i = 0; i < resources.length; i++) {
+			const res = await getLastState(resources[i].name);
+			if (res.progress) {
+                console.log(res.progress);
+				resources[i].progress = res.progress;
+			}
+			if (res.fileModificationDate) {
+				resources[i].lastUpdate = res.fileModificationDate;
+			}
+        }
+	}
+
+	onMount(async () => {
+		await startupRefresh();
+	});
 </script>
 
 <svelte:head>
@@ -40,27 +57,8 @@
 	<link rel="icon" href={logo} />
 </svelte:head>
 
-<div class="w-full h-screen flex items-center justify-center bg-indigo-600">
+<div class="w-full h-screen flex items-center justify-center bg-indigo-800">
 	<div class="container bg-gray-200 rounded-md m-8 p-4">
-		<!-- > -->
-		<!-- 	<button -->
-		<!-- 		class="btn btn-primary" -->
-		<!-- 		on:click={async () => { -->
-		<!-- 			await updateResource(); -->
-		<!-- 		}}>Update</button -->
-		<!-- 	> -->
-		<!-- 	<button -->
-		<!-- 		class="btn btn-primary" -->
-		<!-- 		on:click={async () => { -->
-		<!-- 			await getLastState(); -->
-		<!-- 		}}>Get Last State</button -->
-		<!-- 	> -->
-		<!-- 	<button -->
-		<!-- 		class="btn btn-primary" -->
-		<!-- 		on:click={async () => { -->
-		<!-- 			await downloadLastUpdate(); -->
-		<!-- 		}}>Download Last Update</button -->
-		<!-- 	> -->
 		<div class="overflow-x-auto">
 			<table class="table">
 				<!-- head -->
@@ -141,15 +139,10 @@
 						</tr>
 					{/each}
 				</tbody>
-
-				{#if appState}
-					<tfoot>
-						<tr>
-							<p>{appState}</p>
-						</tr>
-					</tfoot>
-				{/if}
 			</table>
+			{#if appState}
+				<p class="p-4 text-md text-gray-600">{appState}</p>
+			{/if}
 		</div>
 	</div>
 </div>
