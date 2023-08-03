@@ -1,37 +1,23 @@
 import type { RequestEvent, RequestHandler } from './$types';
 import { error, json, text } from '@sveltejs/kit';
 
+import { ResourceRequest, ResourceResponse } from '$lib/utils';
+
 import fs from 'fs';
 import cp from 'child_process';
 import { SERVER_ADDRESS } from '$lib/utils';
 
-export class ResourceRequest {
-    constructor(
-        public resource: string,
-        public command: 'get_last' | 'update' | 'status'
-    ) { }
-}
 
-export class ResourceResponse {
-    constructor(
-        public resource: string,
-        public progress: string,
-        public fileUrl: string,
-        public filename: string,
-        public file_creation_date: string,
-    ) { }
-}
-
-function execShellCommand(cmd) {
- const exec = cp.exec;
- return new Promise((resolve, reject) => {
-  exec(cmd, (error, stdout, stderr) => {
-   if (error) {
-    console.warn(error);
-   }
-   resolve(stdout? stdout : stderr);
-  });
- });
+function execShellCommand(cmd: string) {
+    const exec = cp.exec;
+    return new Promise((resolve, reject) => {
+        exec(cmd, (error, stdout, stderr) => {
+            if (error) {
+                console.warn(error);
+            }
+            resolve(stdout ? stdout : stderr);
+        });
+    });
 }
 
 export const GET = (async ({ url }) => {
@@ -79,7 +65,7 @@ export const POST = (async ({ url, request }) => {
 
         if (updateExists) {
             const { birthtime, mtime, mtimeMs } = fs.statSync(updateFileMaybe)
-            const formattedDate = new Date(mtimeMs).toLocaleDateString("en-US", {timeZone: "Asia/Tehran"})
+            const formattedDate = new Date(mtimeMs).toLocaleDateString("en-US", { timeZone: "Asia/Tehran" })
             let response = new ResourceResponse(req.resource, progressContent, `${SERVER_ADDRESS}?filename=${req.resource}.csv`, `${req.resource}.csv`, `${formattedDate}`)
             return json(response)
         }
@@ -92,7 +78,7 @@ export const POST = (async ({ url, request }) => {
     } else if (req.command == 'status') {
         if (updateExists) {
             const { birthtime, mtime, mtimeMs } = fs.statSync(updateFileMaybe)
-            const formattedDate = new Date(mtimeMs).toLocaleDateString("en-US", {timeZone: "Asia/Tehran"})
+            const formattedDate = new Date(mtimeMs).toLocaleDateString("en-US", { timeZone: "Asia/Tehran" })
             let response = new ResourceResponse(req.resource, progressContent, ``, ``, `${formattedDate}`)
 
             return json(response)

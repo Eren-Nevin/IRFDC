@@ -47,11 +47,11 @@ def get_all_companies(dir_path: str, max_count: Optional[int], mean_time_between
     with open(f'{dir_path}/companies_progress.out', 'w') as f:
         f.seek(0)
         f.truncate(0)
-        f.write(str('0'))
+        f.write(str('1%'))
         f.flush()
         for i in range(1, max_pages + 1):
             print(i)
-            progress: float = (i / max_pages) * 100
+            progress: str = f'{(i / max_pages) * 100}%'
             sleep(mean_time_between * 2 * random.random())
             results = [*results, *(get_company_page(i, page_size)[0])]
             print(progress)
@@ -61,7 +61,7 @@ def get_all_companies(dir_path: str, max_count: Optional[int], mean_time_between
             f.flush()
         f.seek(0)
         f.truncate(0)
-        f.write(str('100'))
+        f.write(str('100%'))
         f.flush()
 
     write_ads_to_csv(f'{dir_path}/companies.csv', results)
@@ -123,11 +123,11 @@ def get_all_specific_product(product: str, dir_path: str, max_count: Optional[in
     with open(f'{dir_path}/{product}_progress.out', 'w') as f:
         f.seek(0)
         f.truncate(0)
-        f.write(str('0'))
+        f.write(str('1%'))
         f.flush()
         for i in range(1, max_pages + 1):
             print(i)
-            progress: int = ((i / max_pages) * 100) // 1
+            progress: str = f'{(i / max_pages) * 100}%'
             f.write(str(progress))
             sleep(mean_time_between * 2 * random.random())
             results = [*results, *(get_specific_product_page(product, i, page_size)[0])]
@@ -138,7 +138,7 @@ def get_all_specific_product(product: str, dir_path: str, max_count: Optional[in
             f.flush()
         f.seek(0)
         f.truncate(0)
-        f.write(str('100'))
+        f.write(str('100%'))
         f.flush()
 
     write_ads_to_csv(f'{dir_path}/{product}.csv', results)
