@@ -2,7 +2,7 @@
 	import { isLoggedIn } from '$lib/auth';
 	import { MetamaskHandler } from '$lib/metamask';
 	import { SERVER_ADDRESS } from '$lib/utils';
-	import { ResourceRequest, ResourceResponse } from '$lib/gather';
+	import { ResourceRequest, ResourceResponse } from './+server';
 	import { stringify } from 'postcss';
 
 	type StartState = 'none' | 'metamask' | 'snap';
@@ -11,6 +11,23 @@
 	let appState: StartState = 'none';
 
 	const metamaskHandler = new MetamaskHandler();
+
+	async function downloadLastUpdate() {
+        console.log("CLICKED!")
+		const rawRes = await fetch(SERVER_ADDRESS, {
+			method: 'POST',
+			body: JSON.stringify(new ResourceRequest('companies', 'get_last'))
+		});
+		const res = await rawRes.json() as ResourceResponse
+        console.log(res)
+
+		if (res.fileUrl) {
+			// Update exists
+			await downloadStateFileFromServer(res.fileUrl, res.filename);
+		} else {
+			console.log(`Update Doesnt Exist:${res.progress}`);
+		}
+	}
 
 	async function openPopUpClickHandler() {
 		console.log(`opening popup`);
@@ -120,19 +137,10 @@
 			}}>Connect Metamask</button
 		>
 
-		<button
-			class="btn btn-primary {getButtonClass('snap', appState)}"
-			on:click={async () => {
-				const rawRes = await fetch(SERVER_ADDRESS, {
-					method: 'POST',
-					body: JSON.stringify(new ResourceRequest('companies', 'get_last'))
-				});
-				const res = await rawRes.json();
-
-				console.log(res);
-
-				await downloadStateFileFromServer(res.fileUrl, res.filename);
-			}}>Open Xtreamly</button
+		<button class="btn btn-primary {getButtonClass('snap', appState)}" on:click={async () => {
+            await downloadLastUpdate();
+        }}
+			>Download Last Update</button
 		>
 	</div>
 </div>

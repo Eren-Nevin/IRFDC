@@ -1,6 +1,8 @@
 import json
+from typing import Optional
 import requests
 import random
+import sys
 from time import sleep
 from pprint import pprint
 
@@ -11,7 +13,7 @@ base_api_url = 'https://irc.fda.gov.ir/api'
 
 # TODO : Add other endpoints
 products_api_endpoints = {
-    'Substance': '/IRCApi/GetRegisteredSubstanceIRC'
+    'substance': '/IRCApi/GetRegisteredSubstanceIRC'
 }
 
 # company_url = 'https://irc.fda.gov.ir/api/Company/LoadCompanies?pageNumber=798&pageSize=100&term=' 
@@ -34,20 +36,32 @@ def get_headers():
     'sec-ch-ua-platform': '"macOS"',
     }
 
-def get_all_companies(file_path: str, max_count: int, mean_time_between=10):
-    count, _ = get_company_page(1, 10)
+def get_all_companies(dir_path: str, max_count: Optional[int], mean_time_between=10):
+    _, count = get_company_page(1, 10)
     if max_count:
         count = min(count, max_count)
     print(count)
     page_size = 1000
     max_pages = (count // 1000) + 1
     results = []
-    for i in range(1, max_pages):
-        print(i)
-        sleep(mean_time_between * 2 * random.random())
-        results = [*results, *(get_company_page(i, page_size)[0])]
+    with open(f'{dir_path}/companies_progress.out', 'w') as f:
+        # f.truncate(0)
+        f.write(str('0'))
+        f.flush()
+        for i in range(1, max_pages + 1):
+            print(i)
+            progress: float = (i / max_pages) * 100
+            sleep(mean_time_between * 2 * random.random())
+            results = [*results, *(get_company_page(i, page_size)[0])]
+            print(progress)
+            # f.truncate(0)
+            f.write(str(progress))
+            f.flush()
+        # f.truncate(0)
+        f.write(str('100'))
+        f.flush()
 
-    write_ads_to_csv(file_path, results)
+    write_ads_to_csv(f'{dir_path}/companies.csv', results)
 
 def get_company_page(page_number: int, page_size: int):
     company_url = f'{base_api_url}/Company/LoadCompanies'
@@ -71,7 +85,8 @@ def get_company_page(page_number: int, page_size: int):
 
     return result, count
 
-def get_specific_product_page(api_endpoint: str, page_number: int, page_size: int):
+def get_specific_product_page(product: str, page_number: int, page_size: int):
+    api_endpoint = products_api_endpoints[product]
     product_url = f'{base_api_url}{api_endpoint}'
     url_with_params = f'{product_url}?pageNumber={page_number}&pageSize={page_size}&term='
     print(url_with_params)
@@ -93,7 +108,8 @@ def get_specific_product_page(api_endpoint: str, page_number: int, page_size: in
 
     return result, count
 
-def get_all_specific_product(api_endpoint: str, file_path: str, max_count: int, mean_time_between=10):
+def get_all_specific_product(product: str, dir_path: str, max_count: Optional[int], mean_time_between=10):
+    api_endpoint = products_api_endpoints[product]
     _, count = get_specific_product_page(api_endpoint, 1, 10)
     if max_count:
         count = min(count, max_count)
@@ -101,14 +117,38 @@ def get_all_specific_product(api_endpoint: str, file_path: str, max_count: int, 
     page_size = 1000
     max_pages = (count // 1000) + 1
     results = []
-    for i in range(1, max_pages):
-        print(i)
-        sleep(mean_time_between * 2 * random.random())
-        results = [*results, *(get_specific_product_page(api_endpoint, i, page_size)[0])]
+    with open(f'{dir_path}/{product}_progress.out', 'w') as f:
+        f.truncate(0)
+        f.write(str('0'))
+        f.flush()
+        for i in range(1, max_pages + 1):
+            print(i)
+            progress: int = ((i / max_pages) * 100) // 1
+            f.write(str(progress))
+            sleep(mean_time_between * 2 * random.random())
+            results = [*results, *(get_specific_product_page(product, i, page_size)[0])]
+            print(progress)
+            f.truncate(0)
+            f.write(str(progress))
+            f.flush()
+        f.truncate(0)
+        f.write(str('100'))
+        f.flush()
 
-    write_ads_to_csv(file_path, results)
+    write_ads_to_csv(f'{dir_path}/{product}.csv', results)
 
 
 if __name__ == '__main__':
-    get_all_specific_product(products_api_endpoints['Substance'], '../appData/substance.csv',
-                             2000)
+    resource = sys.argv[1]
+    count = None
+    try:
+        count = int(sys.argv[2])
+    except:
+        pass
+    if resource == 'companies':
+        get_all_companies('../appData', count)
+    elif resource == 'substance':
+        get_all_specific_product('substance', '../appData', count)
+    else:
+        print("Invalid arguments")
+        exit(1)
