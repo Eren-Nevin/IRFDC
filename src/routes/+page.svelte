@@ -12,8 +12,28 @@
 
 	const metamaskHandler = new MetamaskHandler();
 
+
+    async function updateResource() {
+		const rawRes = await fetch(SERVER_ADDRESS, {
+			method: 'POST',
+			body: JSON.stringify(new ResourceRequest('companies', 'update'))
+		});
+		const res = await rawRes.json() as ResourceResponse
+        console.log(res)
+        
+    }
+
+    async function getLastState() {
+		const rawRes = await fetch(SERVER_ADDRESS, {
+			method: 'POST',
+			body: JSON.stringify(new ResourceRequest('companies', 'status'))
+		});
+		const res = await rawRes.json() as ResourceResponse
+        console.log(res)
+        
+    }
+
 	async function downloadLastUpdate() {
-        console.log("CLICKED!")
 		const rawRes = await fetch(SERVER_ADDRESS, {
 			method: 'POST',
 			body: JSON.stringify(new ResourceRequest('companies', 'get_last'))
@@ -124,19 +144,16 @@
 		class="container mx-auto flex flex-wrap px-5 pt-5 pb-3.5 flex-col
         items-center gap-2 justify-center"
 	>
-		<button
-			class="btn btn-primary {getButtonClass('metamask', appState)}"
-			on:click={async () => {
-				let res = await metamaskHandler.connectAndGetAccounts();
-
-				if (res && res.length > 0) {
-					const account = res[0];
-					console.log(account);
-					appState = 'metamask';
-				}
-			}}>Connect Metamask</button
+		<button class="btn btn-primary {getButtonClass('snap', appState)}" on:click={async () => {
+            await updateResource();
+        }}
+			>Update</button
 		>
-
+		<button class="btn btn-primary {getButtonClass('snap', appState)}" on:click={async () => {
+            await getLastState();
+        }}
+			>Get Last State</button
+		>
 		<button class="btn btn-primary {getButtonClass('snap', appState)}" on:click={async () => {
             await downloadLastUpdate();
         }}

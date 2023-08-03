@@ -45,7 +45,8 @@ def get_all_companies(dir_path: str, max_count: Optional[int], mean_time_between
     max_pages = (count // 1000) + 1
     results = []
     with open(f'{dir_path}/companies_progress.out', 'w') as f:
-        # f.truncate(0)
+        f.seek(0)
+        f.truncate(0)
         f.write(str('0'))
         f.flush()
         for i in range(1, max_pages + 1):
@@ -54,10 +55,12 @@ def get_all_companies(dir_path: str, max_count: Optional[int], mean_time_between
             sleep(mean_time_between * 2 * random.random())
             results = [*results, *(get_company_page(i, page_size)[0])]
             print(progress)
-            # f.truncate(0)
+            f.seek(0)
+            f.truncate(0)
             f.write(str(progress))
             f.flush()
-        # f.truncate(0)
+        f.seek(0)
+        f.truncate(0)
         f.write(str('100'))
         f.flush()
 
@@ -118,6 +121,7 @@ def get_all_specific_product(product: str, dir_path: str, max_count: Optional[in
     max_pages = (count // 1000) + 1
     results = []
     with open(f'{dir_path}/{product}_progress.out', 'w') as f:
+        f.seek(0)
         f.truncate(0)
         f.write(str('0'))
         f.flush()
@@ -128,9 +132,11 @@ def get_all_specific_product(product: str, dir_path: str, max_count: Optional[in
             sleep(mean_time_between * 2 * random.random())
             results = [*results, *(get_specific_product_page(product, i, page_size)[0])]
             print(progress)
+            f.seek(0)
             f.truncate(0)
             f.write(str(progress))
             f.flush()
+        f.seek(0)
         f.truncate(0)
         f.write(str('100'))
         f.flush()
