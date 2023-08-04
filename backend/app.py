@@ -7,7 +7,7 @@ from time import sleep
 from pprint import pprint
 
 from requests.sessions import Request
-from excel import write_ads_to_csv
+from excel import  write_ads_to_excel
 
 base_api_url = 'https://irc.fda.gov.ir/api'
 
@@ -74,7 +74,8 @@ def get_all_companies(dir_path: str, max_count: Optional[int], mean_time_between
         f.write(str('100%'))
         f.flush()
 
-    write_ads_to_csv(f'{dir_path}/companies.csv', results)
+    # write_ads_to_csv(f'{dir_path}/companies.csv', results)
+    write_ads_to_excel(f'{dir_path}/companies.xlsx', results)
 
 def get_company_page(page_number: int, page_size: int):
     company_url = f'{base_api_url}/Company/LoadCompanies'
@@ -114,8 +115,6 @@ def get_specific_product_page(product: str, page_number: int, page_size: int):
     
     res = raw_res.json()
 
-    print(res)
-
     count = res['Count']
     success = res['Success']
     message = res['Message']
@@ -154,7 +153,8 @@ def get_all_specific_product(product: str, dir_path: str, max_count: Optional[in
         f.write(str('100%'))
         f.flush()
 
-    write_ads_to_csv(f'{dir_path}/{product}.csv', results)
+    # write_ads_to_csv(f'{dir_path}/{product}.csv', results)
+    write_ads_to_excel(f'{dir_path}/{product}.xlsx', results)
 
 
 if __name__ == '__main__':

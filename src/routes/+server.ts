@@ -40,7 +40,7 @@ export const GET = (async ({ url }) => {
 // products: /gather/products
 export const POST = (async ({ url, request }) => {
     const req = (await request.json()) as ResourceRequest
-    const updateFileMaybe = `./appData/${req.resource}.csv`
+    const updateFileMaybe = `./appData/${req.resource}.xlsx`
 
     const resource_progress_file = `./appData/${req.resource}_progress.out`
 
@@ -66,7 +66,7 @@ export const POST = (async ({ url, request }) => {
         if (updateExists) {
             const { birthtime, mtime, mtimeMs } = fs.statSync(updateFileMaybe)
             const formattedDate = new Date(mtimeMs).toLocaleString("en-US", { timeZone: "Asia/Tehran" })
-            let response = new ResourceResponse(req.resource, progressContent, `${SERVER_ADDRESS}?filename=${req.resource}.csv`, `${req.resource}.csv`, `${formattedDate}`)
+            let response = new ResourceResponse(req.resource, progressContent, `${SERVER_ADDRESS}?filename=${req.resource}.xlsx`, `${req.resource}.xlsx`, `${formattedDate}`)
             return json(response)
         }
 

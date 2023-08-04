@@ -7,7 +7,7 @@
 	import { onMount } from 'svelte';
 
 	class Resource {
-		constructor(public name: string, public lastUpdate: string, public progress: string) {}
+		constructor(public name: string, public localName: string, public lastUpdate: string, public progress: string) {}
 	}
 
 	// TODO: Does it have size limit?
@@ -29,18 +29,18 @@
 	}
 
 	let appState = '';
-	const companies = new Resource('companies', 'None', '0%');
-	const substance = new Resource('substance', 'None', '0%');
-	const drug_license = new Resource('drug_license', 'None', '0%');
-	const drug_equipment = new Resource('drug_equipment', 'None', '0%');
-	const supplement = new Resource('supplement', 'None', '0%');
-	const supplement_license = new Resource('supplement_license', 'None', '0%');
-	const food = new Resource('food', 'None', '0%');
-	const cosmetic = new Resource('cosmetic', 'None', '0%');
-	const special_food = new Resource('special_food', 'None', '0%');
-	const herbal = new Resource('herbal', 'None', '0%');
-	const essentials = new Resource('essentials', 'None', '0%');
-	const cosmetic_license = new Resource('cosmetic_license', 'None', '0%');
+	const companies = new Resource('companies', 'شرکت ها', 'None', '0%');
+	const substance = new Resource('substance', 'مواد اولیه دارویی', 'None', '0%');
+	const drug_license = new Resource('drug_license', 'پروانه دارو', 'None', '0%');
+	const drug_equipment = new Resource('drug_equipment', 'تجهیزات', 'None', '0%');
+	const supplement = new Resource('supplement',  'مواد اولیه مکمل', 'None', '0%');
+	const supplement_license = new Resource('supplement_license', 'پروانه مکمل', 'None', '0%');
+	const food = new Resource('food', 'مواد اولیه غذایی و آشامیدنی', 'None', '0%');
+	const cosmetic = new Resource('cosmetic', 'مواد اولیه آرایشی و بهداشتی', 'None', '0%');
+	const special_food = new Resource('special_food', 'مواد اولیه غذای ویژه و شیر خشک', 'None', '0%');
+	const herbal = new Resource('herbal', 'مواد اولیه داروهای طبیعی و سنتی', 'None', '0%');
+	const essentials = new Resource('essentials', 'ملزومات دارویی', 'None', '0%');
+	const cosmetic_license = new Resource('cosmetic_license', 'آرایشی و بهداشتی', 'None', '0%');
 
 
 // products_api_endpoints = {
@@ -102,6 +102,7 @@
 				<thead>
 					<tr>
 						<th>Resource</th>
+						<th>Name</th>
 						<th>Last Update</th>
 						<th>Progress</th>
 						<th>
@@ -117,6 +118,9 @@
 						<tr>
 							<td>
 								<p class="font-bold">{resource.name}</p>
+							</td>
+							<td>
+								<p class="font-light">{resource.localName}</p>
 							</td>
 							<td>{resource.lastUpdate}</td>
 							<td> {resource.progress} </td>
