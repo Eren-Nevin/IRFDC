@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 export class ResourceRequest {
     constructor(
         public resource: string,
-        public command: 'get_last' | 'update' | 'status'
+        public command: 'get_last' | 'update' | 'status' | 'stop'
     ) { }
 }
 
@@ -17,8 +17,18 @@ export class ResourceResponse {
     ) { }
 }
 
+// export const SERVER_ADDRESS = 'http://irfdc.adinal.co:9999'
 export const SERVER_ADDRESS = 'http://irfdc.adinal.co:3001'
-// export const SERVER_ADDRESS = 'https://irfdc.adinal.co:3001'
+
+export async function stopResource(resource: string) {
+    const rawRes = await fetch(SERVER_ADDRESS, {
+        method: 'POST',
+        body: JSON.stringify(new ResourceRequest(resource, 'stop'))
+    });
+    const res = (await rawRes.json()) as ResourceResponse;
+    console.log(res);
+    return res
+}
 
 export async function updateResource(resource: string) {
     const rawRes = await fetch(SERVER_ADDRESS, {

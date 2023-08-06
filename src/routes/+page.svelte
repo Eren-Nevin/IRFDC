@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SERVER_ADDRESS, downloadLastUpdate, getLastState, updateResource } from '$lib/utils';
+	import { SERVER_ADDRESS, stopResource, downloadLastUpdate, getLastState, updateResource } from '$lib/utils';
 	import { ResourceRequest, ResourceResponse } from '$lib/utils';
 	import { stringify } from 'postcss';
 
@@ -27,6 +27,18 @@
 			})
 			.catch(() => alert('oh no!'));
 	}
+
+    function formatProgress(progress: string) {
+        if (progress.length > 4){
+            let shortened = progress.substring(0, 4)
+            if (shortened[-1] !== '%'){
+                shortened += '%'
+            }
+            return shortened
+        } else {
+            return progress
+        }
+    }
 
 	let appState = '';
 	const companies = new Resource('companies', 'شرکت ها', 'None', '0%');
@@ -90,7 +102,7 @@
 </script>
 
 <svelte:head>
-	<title>Xtreamly</title>
+	<title>Decachem</title>
 	<link rel="icon" href={logo} />
 </svelte:head>
 
@@ -123,11 +135,11 @@
 								<p class="font-light">{resource.localName}</p>
 							</td>
 							<td>{resource.lastUpdate}</td>
-							<td> {resource.progress} </td>
+							<td> {formatProgress(resource.progress)} </td>
 							<td>
 								<div class="w-full flex flex-row justify-center gap-2">
 									<button
-										class="btn btn-primary btn-s"
+										class="btn btn-info btn-s"
 										on:click={async () => {
 											appState = `Getting ${resource.name} status`;
 											const res = await getLastState(resource.name);
@@ -136,12 +148,14 @@
 											}
 											if (res.fileModificationDate) {
 												resource.lastUpdate = res.fileModificationDate;
-											}
+											} else {
+												resource.lastUpdate = 'None';
+                                            }
 											appState = `Got ${resource.name} state`;
 										}}>Status</button
 									>
 									<button
-										class="btn btn-primary btn-s"
+										class="btn btn-success btn-s"
 										on:click={async () => {
 											appState = `${resource.name} update command issued`;
 											const res = await updateResource(resource.name);
@@ -152,6 +166,19 @@
 												resource.lastUpdate = res.fileModificationDate;
 											}
 										}}>Start</button
+									>
+									<button
+										class="btn btn-error btn-s"
+										on:click={async () => {
+											appState = `${resource.name} stop command issued`;
+											const res = await stopResource(resource.name);
+											if (res.progress) {
+												resource.progress = res.progress;
+											}
+											if (res.fileModificationDate) {
+												resource.lastUpdate = res.fileModificationDate;
+											}
+										}}>Stop</button
 									>
 									<button
 										class="btn btn-primary btn-s"

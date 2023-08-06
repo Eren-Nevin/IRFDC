@@ -46,6 +46,8 @@ def get_headers():
     'sec-ch-ua-platform': '"macOS"',
     }
 
+# https://irc.fda.gov.ir/api/IRCApi/GetDrugEquipmentLicenseItemIRC?licenseOwnerCompanyName=
+
 def get_all_companies(dir_path: str, max_count: Optional[int], mean_time_between=10):
     _, count = get_company_page(1, 10)
     if max_count:
@@ -104,7 +106,11 @@ def get_specific_product_page(product: str, page_number: int, page_size: int):
     product_url = f'{base_api_url}{api_endpoint}'
     # url_with_params = f'{product_url}?pageNumber={page_number}&pageSize={page_size}&term='
     url_with_params = f'{product_url}?licenseOwnerCompanyId=&pageNumber={page_number}&pageSize={page_size}&term='
+    if product == 'drug_equipment':
+        url_with_params = f'{product_url}?licenseOwnerCompanyName=&pageNumber={page_number}&pageSize={page_size}&term='
+        # https://irc.fda.gov.ir/api/IRCApi/GetDrugEquipmentLicenseItemIRC?licenseOwnerCompanyName=
     print(url_with_params)
+
 
     s = requests.session();
 

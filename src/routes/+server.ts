@@ -7,6 +7,7 @@ import fs from 'fs';
 import cp from 'child_process';
 import { SERVER_ADDRESS } from '$lib/utils';
 
+// TODO: Chcek if started and don't start 
 
 function execShellCommand(cmd: string) {
     const exec = cp.exec;
@@ -87,11 +88,15 @@ export const POST = (async ({ url, request }) => {
             return json(response)
         }
 
-    } else if (req.command = 'update') {
+    } else if (req.command == 'update') {
         // TODO: Remove count
         const command = execShellCommand(`cd backend; python3 app.py ${req.resource} ;`);
         let response = new ResourceResponse(req.resource, '0', ``, ``, ``)
         return json(response)
+    } else if (req.command == 'stop') {
+        // const command = await execShellCommand(`ps aux | grep 'python app.py ${req.resource}$' | awk '{print $2}'`);
+        const command = await execShellCommand(`cd backend; ./kill_resource.sh ${req.resource}`);
+        return json({'msg': command})
     }
 
     return json({ 'status': 'bad request' })
