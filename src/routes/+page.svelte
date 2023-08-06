@@ -28,6 +28,8 @@
 			.catch(() => alert('oh no!'));
 	}
 
+
+
     function formatProgress(progress: string) {
         if (progress.length > 4){
             let shortened = progress.substring(0, 4)
@@ -108,41 +110,40 @@
 
 <div class="w-full flex items-center justify-center bg-indigo-800 p-4">
 	<div class="container bg-gray-200 rounded-md m-8 p-4">
+			{#if appState}
+				<p class="p-4 text-lg font-semibold text-gray-600 text-right">{appState}</p>
+			{/if}
 		<div class="overflow-x-auto">
-			<table class="table">
+			<table class="table text-lg text-black font-semibold">
 				<!-- head -->
 				<thead>
 					<tr>
-						<th>Resource</th>
-						<th>Name</th>
-						<th>Last Update</th>
-						<th>Progress</th>
+						<!-- <th class="text-[18px]">زیر سیستم</th> -->
 						<th>
 							<div class="w-full flex flex-row justify-center">
-								<p class="mx-auto">Actions</p>
+								<p class="mx-auto text-[18px] text-black">فرمانها</p>
 							</div>
 						</th>
+						<th class="text-[18px] text-black">آخرین آپدیت ذخیره شده</th>
+						<th class="text-[18px] text-black">درصد پیشرفت</th>
+						<th class="text-[18px] text-right text-black">زیر سیستم</th>
 					</tr>
 				</thead>
 				<tbody>
 					<!-- row 1 -->
 					{#each resources as resource}
-						<tr>
+						<tr class={(resource.progress !== '100%' && resource.progress !== '0' && resource.progress !== '0%') ? 'bg-green-500': ''}>
+							<!-- <td> -->
+							<!-- 	<p class="font-bold">{resource.name}</p> -->
+							<!-- </td> -->
 							<td>
-								<p class="font-bold">{resource.name}</p>
-							</td>
-							<td>
-								<p class="font-light">{resource.localName}</p>
-							</td>
-							<td>{resource.lastUpdate}</td>
-							<td> {formatProgress(resource.progress)} </td>
-							<td>
-								<div class="w-full flex flex-row justify-center gap-2">
+								<div class="w-full flex justify-center flex-row-reverse gap-2">
 									<button
 										class="btn btn-info btn-s"
 										on:click={async () => {
-											appState = `Getting ${resource.name} status`;
+											appState = `در حال گرفتن وضعیت ${resource.localName}`;
 											const res = await getLastState(resource.name);
+                                            console.log(res.progress)
 											if (res.progress) {
 												resource.progress = res.progress;
 											}
@@ -151,13 +152,15 @@
 											} else {
 												resource.lastUpdate = 'None';
                                             }
-											appState = `Got ${resource.name} state`;
-										}}>Status</button
+											appState = `وضعیت ${resource.localName} گرفته شد`;
+										}}>وضعیت</button
 									>
 									<button
 										class="btn btn-success btn-s"
 										on:click={async () => {
-											appState = `${resource.name} update command issued`;
+											appState = `دستور آپدیت ${resource.localName} ارسال شد`;
+											const status = await getLastState(resource.name);
+											if (status.progress === '0' || status.progress === '100%') {
 											const res = await updateResource(resource.name);
 											if (res.progress) {
 												resource.progress = res.progress;
@@ -165,12 +168,17 @@
 											if (res.fileModificationDate) {
 												resource.lastUpdate = res.fileModificationDate;
 											}
-										}}>Start</button
+                                            }  else {
+
+											appState = `${resource.localName} در حال گرفتن است. ابتدا متوقف کرده و سپس شروع کنید`;
+                                            }
+
+										}}>شروع</button
 									>
 									<button
 										class="btn btn-error btn-s"
 										on:click={async () => {
-											appState = `${resource.name} stop command issued`;
+											appState = `دستور توقف ${resource.localName} ارسال شد`;
 											const res = await stopResource(resource.name);
 											if (res.progress) {
 												resource.progress = res.progress;
@@ -178,12 +186,12 @@
 											if (res.fileModificationDate) {
 												resource.lastUpdate = res.fileModificationDate;
 											}
-										}}>Stop</button
+										}}>توقف</button
 									>
 									<button
 										class="btn btn-primary btn-s"
 										on:click={async () => {
-											appState = `${resource.name} download last update command issued`;
+											appState = `دستور دانلود ${resource.localName} صادر شد`;
 											const res = await downloadLastUpdate(resource.name);
 											if (res.progress) {
 												resource.progress = res.progress;
@@ -194,23 +202,25 @@
 
 											if (res.fileUrl) {
 												// Update exists
-												appState = `Downloading ${resource.name} last update`;
+												appState = `Downloading ${resource.localName} last update`;
 												await downloadStateFileFromServer(res.fileUrl, res.filename);
-												appState = `${resource.name} downloaded`;
+												appState = `${resource.localName} دانلود شد`;
 											} else {
-												appState = `Update Doesnt Exist`;
+												appState = `آپدیتی برای ${resource.localName} وجود ندارد`;
 											}
-										}}>Download</button
+										}}>دانلود</button
 									>
 								</div>
+							</td>
+							<td>{resource.lastUpdate}</td>
+							<td> {formatProgress(resource.progress)} </td>
+							<td>
+								<p class="font-medium text-black text-right">{resource.localName}</p>
 							</td>
 						</tr>
 					{/each}
 				</tbody>
 			</table>
-			{#if appState}
-				<p class="p-4 text-md text-gray-600">{appState}</p>
-			{/if}
 		</div>
 	</div>
 </div>
