@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { SERVER_ADDRESS, stopResource, downloadLastUpdate, getLastState, updateResource } from '$lib/utils';
 	import { ResourceRequest, ResourceResponse } from '$lib/utils';
+	import { SERVER_ADDRESS, stopResource, downloadLastUpdate, getLastState, updateResource } from '$lib/utils';
 	import { stringify } from 'postcss';
 
 	import logo from '$lib/assets/logo.png';
@@ -43,6 +43,10 @@
     }
 
 	let appState = '';
+    let appStateResource = '';
+
+
+
 	const companies = new Resource('companies', 'شرکت ها', 'None', '0%');
 	const substance = new Resource('substance', 'مواد اولیه دارویی', 'None', '0%');
 	const drug_license = new Resource('drug_license', 'پروانه دارو', 'None', '0%');
@@ -110,9 +114,6 @@
 
 <div class="w-full flex items-center justify-center bg-indigo-800 p-4">
 	<div class="container bg-gray-200 rounded-md m-8 p-4">
-			{#if appState}
-				<p class="p-4 text-lg font-semibold text-gray-600 text-right">{appState}</p>
-			{/if}
 		<div class="overflow-x-auto">
 			<table class="table text-lg text-black font-semibold">
 				<!-- head -->
@@ -141,6 +142,7 @@
 									<button
 										class="btn btn-info btn-s"
 										on:click={async () => {
+                                            appStateResource = resource.name
 											appState = `در حال گرفتن وضعیت ${resource.localName}`;
 											const res = await getLastState(resource.name);
                                             console.log(res.progress)
@@ -158,6 +160,7 @@
 									<button
 										class="btn btn-success btn-s"
 										on:click={async () => {
+                                            appStateResource = resource.name
 											appState = `دستور آپدیت ${resource.localName} ارسال شد`;
 											const status = await getLastState(resource.name);
 											if (status.progress === '0' || status.progress === '100%') {
@@ -178,6 +181,7 @@
 									<button
 										class="btn btn-error btn-s"
 										on:click={async () => {
+                                            appStateResource = resource.name
 											appState = `دستور توقف ${resource.localName} ارسال شد`;
 											const res = await stopResource(resource.name);
 											if (res.progress) {
@@ -191,6 +195,7 @@
 									<button
 										class="btn btn-primary btn-s"
 										on:click={async () => {
+                                            appStateResource = resource.name
 											appState = `دستور دانلود ${resource.localName} صادر شد`;
 											const res = await downloadLastUpdate(resource.name);
 											if (res.progress) {
@@ -202,9 +207,7 @@
 
 											if (res.fileUrl) {
 												// Update exists
-												appState = `Downloading ${resource.localName} last update`;
 												await downloadStateFileFromServer(res.fileUrl, res.filename);
-												appState = `${resource.localName} دانلود شد`;
 											} else {
 												appState = `آپدیتی برای ${resource.localName} وجود ندارد`;
 											}
@@ -216,6 +219,9 @@
 							<td> {formatProgress(resource.progress)} </td>
 							<td>
 								<p class="font-medium text-black text-right">{resource.localName}</p>
+                                {#if appStateResource && appStateResource === resource.name}
+                                    <p class="p-4 font-medium text-gray-600 text-right">{appState}</p>
+                                {/if}
 							</td>
 						</tr>
 					{/each}
