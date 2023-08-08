@@ -17,7 +17,7 @@ export class ResourceResponse {
     ) { }
 }
 
-export const SERVER_ADDRESS = 'http://irfdc.adinal.co:9999'
+export const SERVER_ADDRESS = 'http://localhost:9999'
 // export const SERVER_ADDRESS = 'http://irfdc.adinal.co'
 
 export async function stopResource(resource: string) {
